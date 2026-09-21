@@ -1,0 +1,10 @@
+idf_component_register(
+    SRCS
+        "src/motor_pwm.c"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        project_config
+        esp_driver_mcpwm
+        freertos
+)

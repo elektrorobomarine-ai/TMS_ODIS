@@ -1,0 +1,11 @@
+# ESP-IDF generated output
+build/
+sdkconfig.old
+
+# Python
+__pycache__/
+*.pyc
+
+# Editors / OS
+.DS_Store
+Thumbs.db

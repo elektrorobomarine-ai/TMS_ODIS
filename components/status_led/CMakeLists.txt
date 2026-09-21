@@ -1,0 +1,10 @@
+idf_component_register(
+    SRCS
+        "src/status_led.c"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        project_config
+        freertos
+        led_strip
+)

@@ -1,0 +1,6 @@
+# Project defaults
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=6144
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+
+# Make compile_commands.json available for VS Code / clangd / C/C++ IntelliSense.
+CONFIG_COMPILER_OPTIMIZATION_DEBUG=y

@@ -1,0 +1,16 @@
+idf_component_register(
+    SRCS
+        "src/ethernet_w5500.c"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        project_config
+        status_led
+        esp_driver_spi
+        esp_eth
+        esp_event
+        esp_netif
+        esp_timer
+        esp_system
+        w5500
+)
