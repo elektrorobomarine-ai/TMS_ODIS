@@ -58,7 +58,9 @@ esp_err_t tms_settings_save(void)
 
 esp_err_t tms_settings_set_speed(motor_id_t motor, uint16_t speed_us, bool save_to_nvs)
 {
-    if (speed_us < TMS_SPEED_MIN_US || speed_us > TMS_SPEED_MAX_US) return ESP_ERR_INVALID_ARG;
+    if (speed_us > TMS_SPEED_MAX_US) {
+        return ESP_ERR_INVALID_ARG;
+    }
 
     switch (motor) {
         case MOTOR_DRUM: s_cfg.drum_speed_us = speed_us; break;

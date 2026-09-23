@@ -1,7 +1,7 @@
 #pragma once
 
 #define APP_NAME                    "ODIS TMS Controller"
-#define APP_VERSION                 "0.3.0"
+#define APP_VERSION                 "0.4.0"
 
 /* Three RC-PWM motor controllers / bidirectional ESCs */
 #define MOTOR_COUNT                 3

@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ODIS TMS Control</title>
+<style>
+:root{
+  --bg:#0b1017;--panel:#121a24;--panel2:#172230;--line:#243245;
+  --text:#e8f0fa;--muted:#8fa1b5;--blue:#4797ff;--cyan:#45d5e8;
+  --green:#36d399;--amber:#f7bc4b;--red:#ff5c62;--shadow:0 18px 50px rgba(0,0,0,.28)
+}
+*{box-sizing:border-box}html,body{margin:0;background:radial-gradient(circle at 20% 0,#122238 0,#0b1017 38%,#080c11 100%);color:var(--text);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;min-height:100%}
+body{padding:20px}.app{max-width:1180px;margin:auto}.header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:16px}
+.brand h1{margin:0;font-size:24px;letter-spacing:.035em}.brand p{margin:5px 0 0;color:var(--muted);font-size:13px}.online{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:13px;font-weight:700}.dot{width:11px;height:11px;border-radius:50%;background:#4a5565;box-shadow:0 0 0 4px rgba(255,255,255,.03)}.dot.on{background:var(--green);box-shadow:0 0 18px rgba(54,211,153,.62)}.dot.warn{background:var(--amber)}
+.grid{display:grid;grid-template-columns:1.03fr .97fr;gap:14px}.card{background:linear-gradient(180deg,rgba(23,34,48,.96),rgba(16,24,34,.96));border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:var(--shadow)}.card h2{font-size:12px;letter-spacing:.12em;color:#aab9ca;margin:0 0 13px;text-transform:uppercase}.wide{grid-column:1/-1}
+.statusTop{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{background:#0f1721;border:1px solid #203044;border-radius:12px;padding:13px}.metric .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.metric .value{font-size:22px;font-weight:800;margin-top:7px}.metric .value.small{font-size:16px}.mode.ulur{color:var(--green)}.mode.tarik{color:var(--cyan)}.mode.stop{color:var(--muted)}
+.controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;color:white;font-weight:800;letter-spacing:.03em;cursor:pointer;min-height:66px;font-size:17px;transition:.14s transform,.14s filter,.14s opacity}.btn:hover{filter:brightness(1.1)}.btn:active{transform:translateY(1px) scale(.995)}.btn:disabled{opacity:.36;cursor:not-allowed}.feed{background:linear-gradient(135deg,#147352,#22a772)}.stop{background:linear-gradient(135deg,#b82832,#f04d57);box-shadow:0 0 24px rgba(255,92,98,.16)}.retrieve{background:linear-gradient(135deg,#176a9f,#318bd0)}.reverse{width:100%;min-height:48px;margin-top:10px;background:#6f5420;font-size:14px}
+.limits{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}.limit{display:flex;align-items:center;justify-content:space-between;background:#0f1721;border:1px solid #203044;border-radius:11px;padding:11px 13px}.lamp{width:13px;height:13px;border-radius:50%;background:#374557}.lamp.active{background:var(--red);box-shadow:0 0 15px rgba(255,92,98,.7)}
+.motorHead,.motor{display:grid;grid-template-columns:1.25fr 1.25fr .75fr .75fr auto;gap:9px;align-items:center}.motorHead{color:var(--muted);font-size:11px;padding:0 6px 7px}.motor{background:#0f1721;border:1px solid #203044;border-radius:11px;padding:10px;margin-top:8px}.motorName{font-weight:800}.speedEdit{display:flex;gap:7px;align-items:center}.speedEdit input[type=range]{width:100%}.number{width:72px;background:#0a111a;color:var(--text);border:1px solid #2b3b50;border-radius:8px;padding:8px;text-align:right;font-weight:700}.mini{border:1px solid #315076;background:#18314d;color:#ddecff;border-radius:8px;padding:8px 12px;font-weight:800;cursor:pointer}.mono{font-family:Consolas,ui-monospace,monospace}.all{margin-top:10px;width:100%;min-height:43px;background:#245d9b;font-size:13px}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:9px}.infoRow{display:flex;justify-content:space-between;gap:15px;background:#0f1721;border:1px solid #203044;border-radius:10px;padding:10px 12px;font-size:13px}.infoRow span:first-child{color:var(--muted)}
+.log{height:175px;overflow:auto;background:#090e14;border:1px solid #1c2a3a;border-radius:11px;padding:10px;font:12px/1.55 Consolas,ui-monospace,monospace;color:#b9c7d7}.log .err{color:#ff858a}.log .ok{color:#70ddb6}.footer{color:#6f8297;text-align:center;font-size:11px;margin:12px 0 0}.notice{color:var(--amber);font-size:11px;margin-top:9px}
+@media(max-width:850px){body{padding:12px}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.statusTop{grid-template-columns:1fr 1fr}.motorHead{display:none}.motor{grid-template-columns:1fr 1fr}.motor>:nth-child(3),.motor>:nth-child(4){text-align:right}.motor .mini{grid-column:1/-1}.header{align-items:flex-start}.brand h1{font-size:20px}}
+@media(max-width:520px){.statusTop{grid-template-columns:1fr 1fr}.controls{grid-template-columns:1fr}.btn{min-height:58px}.motor{grid-template-columns:1fr}.motor>:nth-child(3),.motor>:nth-child(4){text-align:left}.info{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="brand"><h1>ODIS TMS CONTROL</h1><p>Tether Management System • Embedded ESP32-S3 Web Console</p></div>
+    <div class="online"><span id="netDot" class="dot"></span><span id="netText">CONNECTING</span></div>
+  </div>
+
+  <div class="grid">
+    <section class="card wide">
+      <h2>Live System Status</h2>
+      <div class="statusTop">
+        <div class="metric"><div class="label">Mode</div><div id="mode" class="value mode stop">STOP</div></div>
+        <div class="metric"><div class="label">Carriage</div><div id="carriageDir" class="value">-</div></div>
+        <div class="metric"><div class="label">Device IP</div><div id="deviceIp" class="value small mono">-</div></div>
+        <div class="metric"><div class="label">TCP Server</div><div id="tcpPort" class="value small mono">-</div></div>
+      </div>
+      <div class="limits">
+        <div class="limit"><span>LEFT LIMIT</span><span id="leftLamp" class="lamp"></span></div>
+        <div class="limit"><span>RIGHT LIMIT</span><span id="rightLamp" class="lamp"></span></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Motion Control</h2>
+      <div class="controls">
+        <button class="btn feed onlineOnly" onclick="sendCommand({cmd:'ulur'},'ULUR')">ULUR<br><small>FEED OUT</small></button>
+        <button class="btn stop onlineOnly" onclick="sendCommand({cmd:'stop'},'STOP')">STOP<br><small>SOFTWARE STOP</small></button>
+        <button class="btn retrieve onlineOnly" onclick="sendCommand({cmd:'tarik'},'TARIK')">TARIK<br><small>RETRIEVE</small></button>
+      </div>
+      <button class="btn reverse onlineOnly" onclick="sendCommand({cmd:'carriage_reverse'},'REVERSE CARRIAGE')">REVERSE CARRIAGE</button>
+      <div class="notice">Software control only. Hardware emergency-stop should remain independent from Ethernet/ESP32.</div>
+    </section>
+
+    <section class="card">
+      <h2>Controller Information</h2>
+      <div class="info">
+        <div class="infoRow"><span>Application</span><b id="appName">ODIS TMS</b></div>
+        <div class="infoRow"><span>Firmware</span><b id="fwVersion" class="mono">-</b></div>
+        <div class="infoRow"><span>Ethernet</span><b id="ethLink">-</b></div>
+        <div class="infoRow"><span>Last Update</span><b id="lastUpdate" class="mono">-</b></div>
+      </div>
+    </section>
+
+    <section class="card wide">
+      <h2>Motor Speed Settings / NVS</h2>
+      <div class="motorHead"><span>Motor</span><span>Speed offset</span><span>Saved speed</span><span>Actual PWM</span><span></span></div>
+      <div class="motor">
+        <div class="motorName">DRUM MAIN</div>
+        <div class="speedEdit"><input id="drumRange" type="range" min="0" max="500" step="5" oninput="syncSpeed('drum',this.value)"><input id="drumInput" class="number" type="number" min="0" max="500" step="5" oninput="syncSpeed('drum',this.value)"><span>µs</span></div>
+        <div id="drumSaved" class="mono">-</div><div id="drumPwm" class="mono">-</div><button class="mini onlineOnly" onclick="applySpeed('drum')">APPLY</button>
+      </div>
+      <div class="motor">
+        <div class="motorName">CARRIAGE</div>
+        <div class="speedEdit"><input id="carriageRange" type="range" min="0" max="500" step="5" oninput="syncSpeed('carriage',this.value)"><input id="carriageInput" class="number" type="number" min="0" max="500" step="5" oninput="syncSpeed('carriage',this.value)"><span>µs</span></div>
+        <div id="carriageSaved" class="mono">-</div><div id="carriagePwm" class="mono">-</div><button class="mini onlineOnly" onclick="applySpeed('carriage')">APPLY</button>
+      </div>
+      <div class="motor">
+        <div class="motorName">CABLE OUTPUT</div>
+        <div class="speedEdit"><input id="outputRange" type="range" min="0" max="500" step="5" oninput="syncSpeed('output',this.value)"><input id="outputInput" class="number" type="number" min="0" max="500" step="5" oninput="syncSpeed('output',this.value)"><span>µs</span></div>
+        <div id="outputSaved" class="mono">-</div><div id="outputPwm" class="mono">-</div><button class="mini onlineOnly" onclick="applySpeed('output')">APPLY</button>
+      </div>
+      <button class="btn all onlineOnly" onclick="applyAll()">APPLY ALL MOTOR SPEEDS</button>
+    </section>
+
+    <section class="card wide">
+      <h2>Event Log</h2><div id="log" class="log"></div>
+    </section>
+  </div>
+  <div class="footer">ODIS TMS Embedded Control • HTTP API uses the same command handler as TCP JSON server</div>
+</div>
+<script>
+let reqId=0, initializedSpeeds=false, online=false;
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function log(msg,cls=''){const d=document.createElement('div');d.className=cls;d.innerHTML=`[${new Date().toLocaleTimeString()}] ${esc(msg)}`;$('log').prepend(d);while($('log').children.length>60)$('log').lastChild.remove();}
+function setOnline(v){online=v;$('netDot').className='dot'+(v?' on':'');$('netText').textContent=v?'ONLINE':'OFFLINE';document.querySelectorAll('.onlineOnly').forEach(b=>b.disabled=!v);}
+function syncSpeed(m,v){v=Math.max(0,Math.min(500,Number(v)||0));$(m+'Range').value=v;$(m+'Input').value=v;}
+async function api(url,opt={}){const r=await fetch(url,{cache:'no-store',...opt});if(!r.ok)throw new Error(`HTTP ${r.status}`);return await r.json();}
+async function sendCommand(obj,label='',quiet=false){obj.id=++reqId;try{const j=await api('/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(obj)});if(!j.ok)throw new Error(j.error?.message||'Command rejected');if(!quiet)log(`${label||obj.cmd}: OK`,'ok');updateStatus(j.data||{});return j;}catch(e){if(!quiet)log(`${label||obj.cmd}: ${e.message}`,'err');throw e;}}
+async function applySpeed(m){const v=Math.max(0,Math.min(500,Number($(m+'Input').value)||0));syncSpeed(m,v);await sendCommand({cmd:'set_speed',motor:m,speed_us:v},`SET ${m.toUpperCase()} ${v}us`);}
+async function applyAll(){try{await applySpeed('drum');await applySpeed('carriage');await applySpeed('output');log('All speed settings saved to device NVS','ok');}catch(e){}}
+function updateStatus(d){if(!d||typeof d!=='object')return;const mode=String(d.mode||'stop').toLowerCase();$('mode').textContent=mode.toUpperCase();$('mode').className='value mode '+mode;$('carriageDir').textContent=String(d.carriage_direction||'-').toUpperCase();if(d.ip)$('deviceIp').textContent=d.ip;if(d.tcp_port!=null)$('tcpPort').textContent=d.tcp_port;if(d.app)$('appName').textContent=d.app;if(d.version)$('fwVersion').textContent=d.version;if(d.ethernet_link!=null)$('ethLink').textContent=d.ethernet_link?'LINK UP':'LINK DOWN';$('leftLamp').className='lamp'+(d.limits?.left?' active':'');$('rightLamp').className='lamp'+(d.limits?.right?' active':'');['drum','carriage','output'].forEach(m=>{if(d.speed_us?.[m]!=null){$(m+'Saved').textContent=d.speed_us[m]+' µs';if(!initializedSpeeds)syncSpeed(m,d.speed_us[m]);}if(d.pwm_us?.[m]!=null)$(m+'Pwm').textContent=d.pwm_us[m]+' µs';});initializedSpeeds=true;$('lastUpdate').textContent=new Date().toLocaleTimeString();}
+async function poll(){try{const j=await api('/api/status');setOnline(true);updateStatus(j.data||j);}catch(e){if(online)log('Status connection lost: '+e.message,'err');setOnline(false);}finally{setTimeout(poll,650);}}
+window.addEventListener('keydown',e=>{if(e.key==='Escape'&&online){sendCommand({cmd:'stop'},'STOP (ESC)').catch(()=>{});}});
+setOnline(false);log('Opening embedded TMS control console...');poll();
+</script>
+</body>
+</html>
