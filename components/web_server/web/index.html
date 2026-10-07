@@ -3,112 +3,1551 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1118">
 <title>ODIS TMS Control</title>
+
 <style>
 :root{
-  --bg:#0b1017;--panel:#121a24;--panel2:#172230;--line:#243245;
-  --text:#e8f0fa;--muted:#8fa1b5;--blue:#4797ff;--cyan:#45d5e8;
-  --green:#36d399;--amber:#f7bc4b;--red:#ff5c62;--shadow:0 18px 50px rgba(0,0,0,.28)
+  --bg:#0b1118;
+  --panel:#121a24;
+  --panel2:#172230;
+  --line:#263547;
+  --line2:#314359;
+  --text:#e9f0f7;
+  --muted:#8ea0b3;
+  --blue:#4b8dff;
+  --cyan:#41c7df;
+  --green:#46d39a;
+  --amber:#f2ba4b;
+  --red:#f06468;
+  --shadow:0 18px 42px rgba(0,0,0,.22);
+  --radius:16px;
 }
-*{box-sizing:border-box}html,body{margin:0;background:radial-gradient(circle at 20% 0,#122238 0,#0b1017 38%,#080c11 100%);color:var(--text);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;min-height:100%}
-body{padding:20px}.app{max-width:1180px;margin:auto}.header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:16px}
-.brand h1{margin:0;font-size:24px;letter-spacing:.035em}.brand p{margin:5px 0 0;color:var(--muted);font-size:13px}.online{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:13px;font-weight:700}.dot{width:11px;height:11px;border-radius:50%;background:#4a5565;box-shadow:0 0 0 4px rgba(255,255,255,.03)}.dot.on{background:var(--green);box-shadow:0 0 18px rgba(54,211,153,.62)}.dot.warn{background:var(--amber)}
-.grid{display:grid;grid-template-columns:1.03fr .97fr;gap:14px}.card{background:linear-gradient(180deg,rgba(23,34,48,.96),rgba(16,24,34,.96));border:1px solid var(--line);border-radius:15px;padding:16px;box-shadow:var(--shadow)}.card h2{font-size:12px;letter-spacing:.12em;color:#aab9ca;margin:0 0 13px;text-transform:uppercase}.wide{grid-column:1/-1}
-.statusTop{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.metric{background:#0f1721;border:1px solid #203044;border-radius:12px;padding:13px}.metric .label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}.metric .value{font-size:22px;font-weight:800;margin-top:7px}.metric .value.small{font-size:16px}.mode.ulur{color:var(--green)}.mode.tarik{color:var(--cyan)}.mode.stop{color:var(--muted)}
-.controls{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.btn{border:0;border-radius:12px;color:white;font-weight:800;letter-spacing:.03em;cursor:pointer;min-height:66px;font-size:17px;transition:.14s transform,.14s filter,.14s opacity}.btn:hover{filter:brightness(1.1)}.btn:active{transform:translateY(1px) scale(.995)}.btn:disabled{opacity:.36;cursor:not-allowed}.feed{background:linear-gradient(135deg,#147352,#22a772)}.stop{background:linear-gradient(135deg,#b82832,#f04d57);box-shadow:0 0 24px rgba(255,92,98,.16)}.retrieve{background:linear-gradient(135deg,#176a9f,#318bd0)}.reverse{width:100%;min-height:48px;margin-top:10px;background:#6f5420;font-size:14px}
-.limits{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}.limit{display:flex;align-items:center;justify-content:space-between;background:#0f1721;border:1px solid #203044;border-radius:11px;padding:11px 13px}.lamp{width:13px;height:13px;border-radius:50%;background:#374557}.lamp.active{background:var(--red);box-shadow:0 0 15px rgba(255,92,98,.7)}
-.motorHead,.motor{display:grid;grid-template-columns:1.25fr 1.25fr .75fr .75fr auto;gap:9px;align-items:center}.motorHead{color:var(--muted);font-size:11px;padding:0 6px 7px}.motor{background:#0f1721;border:1px solid #203044;border-radius:11px;padding:10px;margin-top:8px}.motorName{font-weight:800}.speedEdit{display:flex;gap:7px;align-items:center}.speedEdit input[type=range]{width:100%}.number{width:72px;background:#0a111a;color:var(--text);border:1px solid #2b3b50;border-radius:8px;padding:8px;text-align:right;font-weight:700}.mini{border:1px solid #315076;background:#18314d;color:#ddecff;border-radius:8px;padding:8px 12px;font-weight:800;cursor:pointer}.mono{font-family:Consolas,ui-monospace,monospace}.all{margin-top:10px;width:100%;min-height:43px;background:#245d9b;font-size:13px}
-.info{display:grid;grid-template-columns:1fr 1fr;gap:9px}.infoRow{display:flex;justify-content:space-between;gap:15px;background:#0f1721;border:1px solid #203044;border-radius:10px;padding:10px 12px;font-size:13px}.infoRow span:first-child{color:var(--muted)}
-.log{height:175px;overflow:auto;background:#090e14;border:1px solid #1c2a3a;border-radius:11px;padding:10px;font:12px/1.55 Consolas,ui-monospace,monospace;color:#b9c7d7}.log .err{color:#ff858a}.log .ok{color:#70ddb6}.footer{color:#6f8297;text-align:center;font-size:11px;margin:12px 0 0}.notice{color:var(--amber);font-size:11px;margin-top:9px}
-@media(max-width:850px){body{padding:12px}.grid{grid-template-columns:1fr}.wide{grid-column:auto}.statusTop{grid-template-columns:1fr 1fr}.motorHead{display:none}.motor{grid-template-columns:1fr 1fr}.motor>:nth-child(3),.motor>:nth-child(4){text-align:right}.motor .mini{grid-column:1/-1}.header{align-items:flex-start}.brand h1{font-size:20px}}
-@media(max-width:520px){.statusTop{grid-template-columns:1fr 1fr}.controls{grid-template-columns:1fr}.btn{min-height:58px}.motor{grid-template-columns:1fr}.motor>:nth-child(3),.motor>:nth-child(4){text-align:left}.info{grid-template-columns:1fr}}
+
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 18% -10%,rgba(75,141,255,.11),transparent 35%),
+    radial-gradient(circle at 95% 15%,rgba(65,199,223,.07),transparent 30%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,"Segoe UI",Roboto,Arial,sans-serif;
+}
+
+button,input,select{font:inherit}
+button{user-select:none}
+.app{
+  width:min(1480px,100%);
+  margin:0 auto;
+  padding:18px;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:15px;
+}
+.brand h1{
+  margin:0;
+  font-size:23px;
+  letter-spacing:.08em;
+  font-weight:750;
+}
+.brand p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:12px;
+}
+.headerRight{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.badge{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 12px;
+  background:rgba(18,26,36,.86);
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--muted);
+  font-size:12px;
+  font-weight:650;
+}
+.dot{
+  width:9px;height:9px;border-radius:50%;
+  background:#51606f;
+  box-shadow:0 0 0 4px rgba(81,96,111,.12);
+}
+.dot.on{
+  background:var(--green);
+  box-shadow:0 0 0 4px rgba(70,211,154,.12),0 0 14px rgba(70,211,154,.35);
+}
+.dot.warn{
+  background:var(--amber);
+  box-shadow:0 0 0 4px rgba(242,186,75,.12);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+  gap:14px;
+}
+.card{
+  background:linear-gradient(180deg,rgba(18,26,36,.98),rgba(16,23,32,.98));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:15px;
+  box-shadow:var(--shadow);
+  min-width:0;
+}
+.wide{grid-column:1/-1}
+.card h2{
+  margin:0 0 13px;
+  color:#dce7f1;
+  font-size:12px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-weight:750;
+}
+.card h3{
+  margin:0;
+  font-size:14px;
+}
+.subtle{color:var(--muted)}
+.mono{font-family:"Cascadia Mono","Consolas",monospace}
+
+.statusGrid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+.metric{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px;
+  min-width:0;
+}
+.metric .label{
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+.metric .value{
+  margin-top:5px;
+  font-size:20px;
+  font-weight:750;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.metric .value.small{font-size:14px;margin-top:8px}
+.mode.stop,.mode.idle{color:#aab6c2}
+.mode.ulur{color:var(--green)}
+.mode.tarik{color:var(--cyan)}
+.mode.manual{color:var(--amber)}
+
+.limitRow{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
+.limitBox{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#101822;
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:11px 12px;
+  font-size:12px;
+}
+.lamp{
+  width:13px;height:13px;border-radius:50%;
+  background:#405061;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
+}
+.lamp.active{
+  background:var(--red);
+  box-shadow:0 0 15px rgba(240,100,104,.45);
+}
+
+.controls{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+.btn{
+  border:1px solid var(--line2);
+  border-radius:12px;
+  padding:13px 11px;
+  color:#fff;
+  background:#1b2938;
+  cursor:pointer;
+  font-weight:750;
+  transition:.14s ease;
+}
+.btn:hover:not(:disabled){transform:translateY(-1px);filter:brightness(1.1)}
+.btn:active:not(:disabled){transform:translateY(0)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn small{
+  display:block;
+  margin-top:3px;
+  color:rgba(255,255,255,.68);
+  font-size:9px;
+  letter-spacing:.06em;
+}
+.btn.feed{background:#185c49;border-color:#26765f}
+.btn.retrieve{background:#185a72;border-color:#25718e}
+.btn.stop{background:#7b2c31;border-color:#a54248}
+.btn.reverse{
+  width:100%;
+  margin-top:9px;
+  background:#624b1c;
+  border-color:#896824;
+}
+.btn.secondary{
+  background:#1b2938;
+}
+.notice{
+  margin-top:10px;
+  color:var(--amber);
+  font-size:10.5px;
+  line-height:1.45;
+}
+
+.infoRows{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0;
+}
+.infoRow{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:9px 0;
+  border-bottom:1px solid rgba(49,67,89,.55);
+  font-size:12px;
+}
+.infoRow:last-child{border-bottom:0}
+.infoRow span{color:var(--muted)}
+.infoRow b{
+  text-align:right;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.motorStatus{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+}
+.motorCard{
+  background:#101822;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:12px;
+}
+.motorCardTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:9px;
+}
+.statePill{
+  padding:4px 7px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  color:var(--muted);
+  font-size:9px;
+  font-weight:750;
+}
+.statePill.run{
+  color:var(--green);
+  border-color:rgba(70,211,154,.4);
+  background:rgba(70,211,154,.08);
+}
+.motorData{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:6px 10px;
+  font-size:11px;
+}
+.motorData span:nth-child(odd){color:var(--muted)}
+.motorData b{text-align:right}
+
+.settingsTable{
+  display:grid;
+  gap:8px;
+}
+.settingHead,.settingRow{
+  display:grid;
+  grid-template-columns:1.15fr .8fr minmax(210px,1.7fr) .65fr auto;
+  align-items:center;
+  gap:10px;
+}
+.settingHead{
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  padding:0 7px 3px;
+}
+.settingRow{
+  padding:9px;
+  background:#101822;
+  border:1px solid var(--line);
+  border-radius:11px;
+}
+.motorName{
+  font-weight:750;
+  font-size:12px;
+}
+.dirTag{
+  display:inline-block;
+  width:max-content;
+  min-width:57px;
+  text-align:center;
+  padding:5px 7px;
+  border-radius:999px;
+  color:#cbd8e5;
+  border:1px solid var(--line2);
+  background:#172230;
+  font-size:9px;
+  font-weight:750;
+}
+.speedEdit{
+  display:grid;
+  grid-template-columns:1fr 72px auto;
+  align-items:center;
+  gap:8px;
+}
+input[type=range]{width:100%;accent-color:var(--blue)}
+input[type=number],select{
+  width:100%;
+  border:1px solid var(--line2);
+  border-radius:9px;
+  background:#0b121a;
+  color:var(--text);
+  padding:8px 9px;
+  outline:none;
+}
+input[type=number]:focus,select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(75,141,255,.10);
+}
+.savedVal{
+  color:var(--cyan);
+  font:700 11px "Cascadia Mono","Consolas",monospace;
+  text-align:right;
+}
+.mini{
+  border:1px solid var(--line2);
+  border-radius:9px;
+  padding:8px 11px;
+  background:#203248;
+  color:#fff;
+  cursor:pointer;
+  font-size:10px;
+  font-weight:750;
+}
+.mini:hover:not(:disabled){filter:brightness(1.12)}
+.mini:disabled{opacity:.4;cursor:not-allowed}
+.settingsActions{
+  display:flex;
+  gap:9px;
+  margin-top:10px;
+  flex-wrap:wrap;
+}
+.settingsActions .btn{padding:10px 13px}
+
+.manualGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr auto auto;
+  gap:10px;
+  align-items:end;
+}
+.field label{
+  display:block;
+  margin-bottom:5px;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.manualSpeed{
+  display:grid;
+  grid-template-columns:1fr 76px;
+  gap:8px;
+  align-items:center;
+}
+.runManual{background:#185c49;border-color:#26765f}
+.stopMotor{background:#663539;border-color:#87464b}
+.manualHelp{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:10.5px;
+  line-height:1.5;
+}
+
+.logToolbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:9px;
+}
+.log{
+  height:220px;
+  overflow:auto;
+  background:#080e14;
+  border:1px solid #1d2a39;
+  border-radius:11px;
+  padding:10px;
+  color:#bac7d4;
+  font:11px/1.55 "Cascadia Mono","Consolas",monospace;
+}
+.log .ok{color:#77dfb8}
+.log .err{color:#ff8589}
+.log .warn{color:#f2c564}
+.log .tx{color:#6fa7ff}
+.log .rx{color:#86d9e7}
+
+.footer{
+  padding:14px 4px 2px;
+  text-align:center;
+  color:#627589;
+  font-size:10px;
+}
+
+@media(max-width:1050px){
+  .grid{grid-template-columns:1fr}
+  .wide{grid-column:auto}
+  .statusGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .settingHead{display:none}
+  .settingRow{
+    grid-template-columns:1fr .65fr minmax(220px,1.5fr) .7fr auto;
+  }
+  .manualGrid{
+    grid-template-columns:1fr 1fr;
+  }
+  .manualGrid .wideField{grid-column:1/-1}
+}
+@media(max-width:700px){
+  .app{padding:11px}
+  .header{align-items:flex-start}
+  .brand h1{font-size:19px}
+  .statusGrid,.motorStatus{grid-template-columns:1fr}
+  .controls{grid-template-columns:1fr}
+  .settingRow{
+    grid-template-columns:1fr 1fr;
+  }
+  .speedEdit{grid-column:1/-1}
+  .settingRow .savedVal{text-align:left}
+  .settingRow .mini{grid-column:1/-1}
+  .manualGrid{grid-template-columns:1fr}
+  .manualGrid .wideField{grid-column:auto}
+}
 </style>
 </head>
+
 <body>
 <div class="app">
+
   <div class="header">
-    <div class="brand"><h1>ODIS TMS CONTROL</h1><p>Tether Management System • Embedded ESP32-S3 Web Console</p></div>
-    <div class="online"><span id="netDot" class="dot"></span><span id="netText">CONNECTING</span></div>
+    <div class="brand">
+      <h1>ODIS TMS CONTROL</h1>
+      <p>Tether Management System • ESP32-S3 Embedded Control Console • Web UI v0.5.0</p>
+    </div>
+
+    <div class="headerRight">
+      <div class="badge">
+        <span id="netDot" class="dot"></span>
+        <span id="netText">CONNECTING</span>
+      </div>
+      <div class="badge mono">
+        <span id="lastUpdate">--:--:--</span>
+      </div>
+    </div>
   </div>
+
 
   <div class="grid">
+
+    <!-- ======================================================
+         LIVE STATUS
+         ====================================================== -->
     <section class="card wide">
       <h2>Live System Status</h2>
-      <div class="statusTop">
-        <div class="metric"><div class="label">Mode</div><div id="mode" class="value mode stop">STOP</div></div>
-        <div class="metric"><div class="label">Carriage</div><div id="carriageDir" class="value">-</div></div>
-        <div class="metric"><div class="label">Device IP</div><div id="deviceIp" class="value small mono">-</div></div>
-        <div class="metric"><div class="label">TCP Server</div><div id="tcpPort" class="value small mono">-</div></div>
+
+      <div class="statusGrid">
+        <div class="metric">
+          <div class="label">Mode</div>
+          <div id="mode" class="value mode stop">STOP</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">Carriage</div>
+          <div id="carriageDir" class="value">-</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">Device IP</div>
+          <div id="deviceIp" class="value small mono">-</div>
+        </div>
+
+        <div class="metric">
+          <div class="label">TCP Server</div>
+          <div id="tcpPort" class="value small mono">-</div>
+        </div>
       </div>
-      <div class="limits">
-        <div class="limit"><span>LEFT LIMIT</span><span id="leftLamp" class="lamp"></span></div>
-        <div class="limit"><span>RIGHT LIMIT</span><span id="rightLamp" class="lamp"></span></div>
+
+      <div class="limitRow">
+        <div class="limitBox">
+          <span>LEFT LIMIT</span>
+          <span id="leftLamp" class="lamp"></span>
+        </div>
+
+        <div class="limitBox">
+          <span>RIGHT LIMIT</span>
+          <span id="rightLamp" class="lamp"></span>
+        </div>
       </div>
     </section>
 
+
+    <!-- ======================================================
+         AUTO OPERATION
+         ====================================================== -->
     <section class="card">
-      <h2>Motion Control</h2>
+      <h2>Automatic TMS Operation</h2>
+
       <div class="controls">
-        <button class="btn feed onlineOnly" onclick="sendCommand({cmd:'ulur'},'ULUR')">ULUR<br><small>FEED OUT</small></button>
-        <button class="btn stop onlineOnly" onclick="sendCommand({cmd:'stop'},'STOP')">STOP<br><small>SOFTWARE STOP</small></button>
-        <button class="btn retrieve onlineOnly" onclick="sendCommand({cmd:'tarik'},'TARIK')">TARIK<br><small>RETRIEVE</small></button>
+        <button class="btn feed onlineOnly"
+                onclick="sendCommand({cmd:'ulur'},'ULUR')">
+          ULUR
+          <small>FEED OUT</small>
+        </button>
+
+        <button class="btn stop onlineOnly"
+                onclick="sendCommand({cmd:'stop'},'STOP')">
+          STOP
+          <small>SOFTWARE STOP</small>
+        </button>
+
+        <button class="btn retrieve onlineOnly"
+                onclick="sendCommand({cmd:'tarik'},'TARIK')">
+          TARIK
+          <small>RETRIEVE</small>
+        </button>
       </div>
-      <button class="btn reverse onlineOnly" onclick="sendCommand({cmd:'carriage_reverse'},'REVERSE CARRIAGE')">REVERSE CARRIAGE</button>
-      <div class="notice">Software control only. Hardware emergency-stop should remain independent from Ethernet/ESP32.</div>
+
+      <button class="btn reverse onlineOnly"
+              onclick="sendCommand({cmd:'carriage_reverse'},'REVERSE CARRIAGE')">
+        REVERSE CARRIAGE
+      </button>
+
+      <div class="notice">
+        Software control only. Hardware emergency-stop should remain independent from Ethernet and ESP32-S3.
+      </div>
     </section>
 
+
+    <!-- ======================================================
+         CONTROLLER INFO
+         ====================================================== -->
     <section class="card">
       <h2>Controller Information</h2>
-      <div class="info">
-        <div class="infoRow"><span>Application</span><b id="appName">ODIS TMS</b></div>
-        <div class="infoRow"><span>Firmware</span><b id="fwVersion" class="mono">-</b></div>
-        <div class="infoRow"><span>Ethernet</span><b id="ethLink">-</b></div>
-        <div class="infoRow"><span>Last Update</span><b id="lastUpdate" class="mono">-</b></div>
+
+      <div class="infoRows">
+        <div class="infoRow">
+          <span>Application</span>
+          <b id="appName">ODIS TMS Controller</b>
+        </div>
+
+        <div class="infoRow">
+          <span>Firmware</span>
+          <b id="fwVersion" class="mono">-</b>
+        </div>
+
+        <div class="infoRow">
+          <span>HTTP API</span>
+          <b class="mono">/api/command</b>
+        </div>
+
+        <div class="infoRow">
+          <span>Status API</span>
+          <b class="mono">/api/status</b>
+        </div>
       </div>
     </section>
 
+
+    <!-- ======================================================
+         MOTOR RUNTIME STATUS
+         ====================================================== -->
     <section class="card wide">
-      <h2>Motor Speed Settings / NVS</h2>
-      <div class="motorHead"><span>Motor</span><span>Speed offset</span><span>Saved speed</span><span>Actual PWM</span><span></span></div>
-      <div class="motor">
-        <div class="motorName">DRUM MAIN</div>
-        <div class="speedEdit"><input id="drumRange" type="range" min="0" max="500" step="5" oninput="syncSpeed('drum',this.value)"><input id="drumInput" class="number" type="number" min="0" max="500" step="5" oninput="syncSpeed('drum',this.value)"><span>µs</span></div>
-        <div id="drumSaved" class="mono">-</div><div id="drumPwm" class="mono">-</div><button class="mini onlineOnly" onclick="applySpeed('drum')">APPLY</button>
+      <h2>Motor Runtime</h2>
+
+      <div class="motorStatus">
+        <div class="motorCard">
+          <div class="motorCardTop">
+            <h3>DRUM MAIN</h3>
+            <span id="drumState" class="statePill">STOP</span>
+          </div>
+
+          <div class="motorData">
+            <span>Direction</span><b id="drumDir">-</b>
+            <span>Speed</span><b id="drumRunSpeed" class="mono">0 µs</b>
+            <span>PWM</span><b id="drumPwm" class="mono">1500 µs</b>
+          </div>
+        </div>
+
+        <div class="motorCard">
+          <div class="motorCardTop">
+            <h3>CARRIAGE</h3>
+            <span id="carriageState" class="statePill">STOP</span>
+          </div>
+
+          <div class="motorData">
+            <span>Direction</span><b id="carriageRunDir">-</b>
+            <span>Speed</span><b id="carriageRunSpeed" class="mono">0 µs</b>
+            <span>PWM</span><b id="carriagePwm" class="mono">1500 µs</b>
+          </div>
+        </div>
+
+        <div class="motorCard">
+          <div class="motorCardTop">
+            <h3>CABLE OUTPUT</h3>
+            <span id="outputState" class="statePill">STOP</span>
+          </div>
+
+          <div class="motorData">
+            <span>Direction</span><b id="outputDir">-</b>
+            <span>Speed</span><b id="outputRunSpeed" class="mono">0 µs</b>
+            <span>PWM</span><b id="outputPwm" class="mono">1500 µs</b>
+          </div>
+        </div>
       </div>
-      <div class="motor">
-        <div class="motorName">CARRIAGE</div>
-        <div class="speedEdit"><input id="carriageRange" type="range" min="0" max="500" step="5" oninput="syncSpeed('carriage',this.value)"><input id="carriageInput" class="number" type="number" min="0" max="500" step="5" oninput="syncSpeed('carriage',this.value)"><span>µs</span></div>
-        <div id="carriageSaved" class="mono">-</div><div id="carriagePwm" class="mono">-</div><button class="mini onlineOnly" onclick="applySpeed('carriage')">APPLY</button>
-      </div>
-      <div class="motor">
-        <div class="motorName">CABLE OUTPUT</div>
-        <div class="speedEdit"><input id="outputRange" type="range" min="0" max="500" step="5" oninput="syncSpeed('output',this.value)"><input id="outputInput" class="number" type="number" min="0" max="500" step="5" oninput="syncSpeed('output',this.value)"><span>µs</span></div>
-        <div id="outputSaved" class="mono">-</div><div id="outputPwm" class="mono">-</div><button class="mini onlineOnly" onclick="applySpeed('output')">APPLY</button>
-      </div>
-      <button class="btn all onlineOnly" onclick="applyAll()">APPLY ALL MOTOR SPEEDS</button>
     </section>
 
+
+    <!-- ======================================================
+         DIRECTIONAL NVS SETTINGS
+         ====================================================== -->
     <section class="card wide">
-      <h2>Event Log</h2><div id="log" class="log"></div>
+      <h2>Directional Motor Speed Profiles / NVS</h2>
+
+      <div class="settingsTable">
+
+        <div class="settingHead">
+          <span>Motor</span>
+          <span>Direction</span>
+          <span>Set Speed Offset</span>
+          <span>Saved</span>
+          <span></span>
+        </div>
+
+        <div class="settingRow">
+          <div class="motorName">DRUM MAIN</div>
+          <div><span class="dirTag">ULUR</span></div>
+          <div class="speedEdit">
+            <input id="drum_ulurRange" type="range" min="0" max="500" step="5"
+                   oninput="syncProfile('drum','ulur',this.value)">
+            <input id="drum_ulurInput" type="number" min="0" max="500" step="5"
+                   oninput="syncProfile('drum','ulur',this.value)">
+            <span>µs</span>
+          </div>
+          <div id="drum_ulurSaved" class="savedVal">-</div>
+          <button class="mini onlineOnly" onclick="applyProfile('drum','ulur')">APPLY</button>
+        </div>
+
+        <div class="settingRow">
+          <div class="motorName">DRUM MAIN</div>
+          <div><span class="dirTag">TARIK</span></div>
+          <div class="speedEdit">
+            <input id="drum_tarikRange" type="range" min="0" max="500" step="5"
+                   oninput="syncProfile('drum','tarik',this.value)">
+            <input id="drum_tarikInput" type="number" min="0" max="500" step="5"
+                   oninput="syncProfile('drum','tarik',this.value)">
+            <span>µs</span>
+          </div>
+          <div id="drum_tarikSaved" class="savedVal">-</div>
+          <button class="mini onlineOnly" onclick="applyProfile('drum','tarik')">APPLY</button>
+        </div>
+
+        <div class="settingRow">
+          <div class="motorName">CARRIAGE</div>
+          <div><span class="dirTag">LEFT</span></div>
+          <div class="speedEdit">
+            <input id="carriage_leftRange" type="range" min="0" max="500" step="5"
+                   oninput="syncProfile('carriage','left',this.value)">
+            <input id="carriage_leftInput" type="number" min="0" max="500" step="5"
+                   oninput="syncProfile('carriage','left',this.value)">
+            <span>µs</span>
+          </div>
+          <div id="carriage_leftSaved" class="savedVal">-</div>
+          <button class="mini onlineOnly" onclick="applyProfile('carriage','left')">APPLY</button>
+        </div>
+
+        <div class="settingRow">
+          <div class="motorName">CARRIAGE</div>
+          <div><span class="dirTag">RIGHT</span></div>
+          <div class="speedEdit">
+            <input id="carriage_rightRange" type="range" min="0" max="500" step="5"
+                   oninput="syncProfile('carriage','right',this.value)">
+            <input id="carriage_rightInput" type="number" min="0" max="500" step="5"
+                   oninput="syncProfile('carriage','right',this.value)">
+            <span>µs</span>
+          </div>
+          <div id="carriage_rightSaved" class="savedVal">-</div>
+          <button class="mini onlineOnly" onclick="applyProfile('carriage','right')">APPLY</button>
+        </div>
+
+        <div class="settingRow">
+          <div class="motorName">CABLE OUTPUT</div>
+          <div><span class="dirTag">ULUR</span></div>
+          <div class="speedEdit">
+            <input id="output_ulurRange" type="range" min="0" max="500" step="5"
+                   oninput="syncProfile('output','ulur',this.value)">
+            <input id="output_ulurInput" type="number" min="0" max="500" step="5"
+                   oninput="syncProfile('output','ulur',this.value)">
+            <span>µs</span>
+          </div>
+          <div id="output_ulurSaved" class="savedVal">-</div>
+          <button class="mini onlineOnly" onclick="applyProfile('output','ulur')">APPLY</button>
+        </div>
+
+        <div class="settingRow">
+          <div class="motorName">CABLE OUTPUT</div>
+          <div><span class="dirTag">TARIK</span></div>
+          <div class="speedEdit">
+            <input id="output_tarikRange" type="range" min="0" max="500" step="5"
+                   oninput="syncProfile('output','tarik',this.value)">
+            <input id="output_tarikInput" type="number" min="0" max="500" step="5"
+                   oninput="syncProfile('output','tarik',this.value)">
+            <span>µs</span>
+          </div>
+          <div id="output_tarikSaved" class="savedVal">-</div>
+          <button class="mini onlineOnly" onclick="applyProfile('output','tarik')">APPLY</button>
+        </div>
+      </div>
+
+      <div class="settingsActions">
+        <button class="btn secondary onlineOnly" onclick="applyAllProfiles()">
+          APPLY ALL 6 PROFILES
+        </button>
+
+        <button class="btn secondary onlineOnly" onclick="restoreDefaults()">
+          RESTORE DEFAULTS
+        </button>
+      </div>
     </section>
+
+
+    <!-- ======================================================
+         MANUAL CONTROL
+         ====================================================== -->
+    <section class="card wide">
+      <h2>Manual Motor Control</h2>
+
+      <div class="manualGrid">
+
+        <div class="field">
+          <label>Motor</label>
+          <select id="manualMotor" onchange="updateManualDirections()">
+            <option value="drum">Drum Main</option>
+            <option value="carriage">Carriage</option>
+            <option value="output">Cable Output</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Direction</label>
+          <select id="manualDirection"></select>
+        </div>
+
+        <div class="field wideField">
+          <label>Temporary Speed Offset</label>
+          <div class="manualSpeed">
+            <input id="manualSpeedRange" type="range" min="0" max="500" step="5"
+                   value="150" oninput="syncManualSpeed(this.value)">
+            <input id="manualSpeedInput" type="number" min="0" max="500" step="5"
+                   value="150" oninput="syncManualSpeed(this.value)">
+          </div>
+        </div>
+
+        <button class="btn runManual onlineOnly" onclick="manualRun()">
+          RUN
+        </button>
+
+        <button class="btn stopMotor onlineOnly" onclick="manualStop()">
+          STOP MOTOR
+        </button>
+      </div>
+
+      <div class="manualHelp">
+        Manual speed is temporary and is not written to NVS. The first manual RUN exits ULUR/TARIK mode.
+        Carriage commands toward an active endpoint are rejected; a carriage already moving into a newly-triggered
+        endpoint is stopped automatically.
+      </div>
+    </section>
+
+
+    <!-- ======================================================
+         EVENT LOG
+         ====================================================== -->
+    <section class="card wide">
+      <div class="logToolbar">
+        <h2 style="margin:0">Event Log</h2>
+        <button class="mini" onclick="clearLog()">CLEAR</button>
+      </div>
+
+      <div id="log" class="log"></div>
+    </section>
+
   </div>
-  <div class="footer">ODIS TMS Embedded Control • HTTP API uses the same command handler as TCP JSON server</div>
+
+  <div class="footer">
+    ODIS TMS Embedded Control • TCP and HTTP share the same command handler
+  </div>
+
 </div>
+
+
 <script>
-let reqId=0, initializedSpeeds=false, online=false;
-const $=id=>document.getElementById(id);
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function log(msg,cls=''){const d=document.createElement('div');d.className=cls;d.innerHTML=`[${new Date().toLocaleTimeString()}] ${esc(msg)}`;$('log').prepend(d);while($('log').children.length>60)$('log').lastChild.remove();}
-function setOnline(v){online=v;$('netDot').className='dot'+(v?' on':'');$('netText').textContent=v?'ONLINE':'OFFLINE';document.querySelectorAll('.onlineOnly').forEach(b=>b.disabled=!v);}
-function syncSpeed(m,v){v=Math.max(0,Math.min(500,Number(v)||0));$(m+'Range').value=v;$(m+'Input').value=v;}
-async function api(url,opt={}){const r=await fetch(url,{cache:'no-store',...opt});if(!r.ok)throw new Error(`HTTP ${r.status}`);return await r.json();}
-async function sendCommand(obj,label='',quiet=false){obj.id=++reqId;try{const j=await api('/api/command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(obj)});if(!j.ok)throw new Error(j.error?.message||'Command rejected');if(!quiet)log(`${label||obj.cmd}: OK`,'ok');updateStatus(j.data||{});return j;}catch(e){if(!quiet)log(`${label||obj.cmd}: ${e.message}`,'err');throw e;}}
-async function applySpeed(m){const v=Math.max(0,Math.min(500,Number($(m+'Input').value)||0));syncSpeed(m,v);await sendCommand({cmd:'set_speed',motor:m,speed_us:v},`SET ${m.toUpperCase()} ${v}us`);}
-async function applyAll(){try{await applySpeed('drum');await applySpeed('carriage');await applySpeed('output');log('All speed settings saved to device NVS','ok');}catch(e){}}
-function updateStatus(d){if(!d||typeof d!=='object')return;const mode=String(d.mode||'stop').toLowerCase();$('mode').textContent=mode.toUpperCase();$('mode').className='value mode '+mode;$('carriageDir').textContent=String(d.carriage_direction||'-').toUpperCase();if(d.ip)$('deviceIp').textContent=d.ip;if(d.tcp_port!=null)$('tcpPort').textContent=d.tcp_port;if(d.app)$('appName').textContent=d.app;if(d.version)$('fwVersion').textContent=d.version;if(d.ethernet_link!=null)$('ethLink').textContent=d.ethernet_link?'LINK UP':'LINK DOWN';$('leftLamp').className='lamp'+(d.limits?.left?' active':'');$('rightLamp').className='lamp'+(d.limits?.right?' active':'');['drum','carriage','output'].forEach(m=>{if(d.speed_us?.[m]!=null){$(m+'Saved').textContent=d.speed_us[m]+' µs';if(!initializedSpeeds)syncSpeed(m,d.speed_us[m]);}if(d.pwm_us?.[m]!=null)$(m+'Pwm').textContent=d.pwm_us[m]+' µs';});initializedSpeeds=true;$('lastUpdate').textContent=new Date().toLocaleTimeString();}
-async function poll(){try{const j=await api('/api/status');setOnline(true);updateStatus(j.data||j);}catch(e){if(online)log('Status connection lost: '+e.message,'err');setOnline(false);}finally{setTimeout(poll,650);}}
-window.addEventListener('keydown',e=>{if(e.key==='Escape'&&online){sendCommand({cmd:'stop'},'STOP (ESC)').catch(()=>{});}});
-setOnline(false);log('Opening embedded TMS control console...');poll();
+'use strict';
+
+let reqId = 0;
+let online = false;
+let initializedProfiles = false;
+
+const POLL_MS = 650;
+
+const $ = id => document.getElementById(id);
+
+const profiles = [
+  ['drum','ulur'],
+  ['drum','tarik'],
+  ['carriage','left'],
+  ['carriage','right'],
+  ['output','ulur'],
+  ['output','tarik']
+];
+
+
+/* ============================================================
+ * GENERAL HELPERS
+ * ============================================================ */
+
+function clampSpeed(v){
+  v = Number(v);
+
+  if(!Number.isFinite(v)){
+    v = 0;
+  }
+
+  v = Math.round(v);
+
+  return Math.max(0,Math.min(500,v));
+}
+
+
+function esc(s){
+  return String(s).replace(
+    /[&<>"']/g,
+    c => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[c])
+  );
+}
+
+
+function log(message,cls=''){
+  const row = document.createElement('div');
+
+  row.className = cls;
+
+  row.innerHTML =
+    `[${new Date().toLocaleTimeString()}] ${esc(message)}`;
+
+  $('log').prepend(row);
+
+  while($('log').children.length > 100){
+    $('log').lastChild.remove();
+  }
+}
+
+
+function clearLog(){
+  $('log').innerHTML = '';
+}
+
+
+function setOnline(value){
+  online = value;
+
+  $('netDot').className =
+    'dot' + (value ? ' on' : '');
+
+  $('netText').textContent =
+    value ? 'ONLINE' : 'OFFLINE';
+
+  document
+    .querySelectorAll('.onlineOnly')
+    .forEach(
+      item => item.disabled = !value
+    );
+}
+
+
+function errorMessage(json,fallback='Command failed'){
+  if(
+    json &&
+    json.error &&
+    typeof json.error === 'object'
+  ){
+    return json.error.message ||
+           json.error.code ||
+           fallback;
+  }
+
+  return fallback;
+}
+
+
+/* ============================================================
+ * HTTP API
+ * ============================================================ */
+
+async function api(url,options={}){
+  const response = await fetch(
+    url,
+    {
+      cache:'no-store',
+      ...options
+    }
+  );
+
+  let json = null;
+
+  try{
+    json = await response.json();
+  }catch(_){
+    throw new Error(`HTTP ${response.status}: invalid JSON response`);
+  }
+
+  if(!response.ok){
+    throw new Error(
+      errorMessage(
+        json,
+        `HTTP ${response.status}`
+      )
+    );
+  }
+
+  return json;
+}
+
+
+async function sendCommand(
+  object,
+  label='',
+  quiet=false
+){
+  object.id = ++reqId;
+
+  if(!quiet){
+    log(
+      `TX ${JSON.stringify(object)}`,
+      'tx'
+    );
+  }
+
+  try{
+    const json = await api(
+      '/api/command',
+      {
+        method:'POST',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify(object)
+      }
+    );
+
+    if(!json.ok){
+      throw new Error(
+        errorMessage(json)
+      );
+    }
+
+    if(!quiet){
+      log(
+        `${label || object.cmd}: OK`,
+        'ok'
+      );
+    }
+
+    if(json.data){
+      updateStatus(json.data);
+    }
+
+    return json;
+
+  }catch(error){
+
+    if(!quiet){
+      log(
+        `${label || object.cmd}: ${error.message}`,
+        'err'
+      );
+    }
+
+    throw error;
+  }
+}
+
+
+/* ============================================================
+ * SPEED PROFILE UI
+ * ============================================================ */
+
+function profileKey(motor,direction){
+  return `${motor}_${direction}`;
+}
+
+
+function syncProfile(
+  motor,
+  direction,
+  value
+){
+  const key =
+    profileKey(
+      motor,
+      direction
+    );
+
+  value =
+    clampSpeed(value);
+
+  $(`${key}Range`).value =
+    value;
+
+  $(`${key}Input`).value =
+    value;
+}
+
+
+async function applyProfile(
+  motor,
+  direction
+){
+  const key =
+    profileKey(
+      motor,
+      direction
+    );
+
+  const speed =
+    clampSpeed(
+      $(`${key}Input`).value
+    );
+
+  syncProfile(
+    motor,
+    direction,
+    speed
+  );
+
+  await sendCommand(
+    {
+      cmd:'set_speed',
+      motor,
+      direction,
+      speed_us:speed
+    },
+    `SET ${motor.toUpperCase()} ${direction.toUpperCase()} ${speed}us`
+  );
+}
+
+
+async function applyAllProfiles(){
+  try{
+    for(const [motor,direction] of profiles){
+      await applyProfile(
+        motor,
+        direction
+      );
+    }
+
+    log(
+      'All 6 directional speed profiles saved to NVS',
+      'ok'
+    );
+
+  }catch(_){
+    /* individual error already logged */
+  }
+}
+
+
+async function restoreDefaults(){
+  const accepted = window.confirm(
+    'Restore all 6 motor speed profiles to firmware defaults?'
+  );
+
+  if(!accepted){
+    return;
+  }
+
+  try{
+    await sendCommand(
+      {cmd:'restore_defaults'},
+      'RESTORE DEFAULTS'
+    );
+
+    initializedProfiles = false;
+
+    await pollOnce();
+
+  }catch(_){}
+}
+
+
+/* ============================================================
+ * MANUAL CONTROL
+ * ============================================================ */
+
+function updateManualDirections(){
+  const motor =
+    $('manualMotor').value;
+
+  const direction =
+    $('manualDirection');
+
+  direction.innerHTML = '';
+
+  const items =
+    motor === 'carriage'
+    ? [
+        ['left','LEFT'],
+        ['right','RIGHT']
+      ]
+    : [
+        ['ulur','ULUR'],
+        ['tarik','TARIK']
+      ];
+
+  for(const [value,label] of items){
+    const option =
+      document.createElement('option');
+
+    option.value =
+      value;
+
+    option.textContent =
+      label;
+
+    direction.appendChild(option);
+  }
+}
+
+
+function syncManualSpeed(value){
+  value =
+    clampSpeed(value);
+
+  $('manualSpeedRange').value =
+    value;
+
+  $('manualSpeedInput').value =
+    value;
+}
+
+
+async function manualRun(){
+  const motor =
+    $('manualMotor').value;
+
+  const direction =
+    $('manualDirection').value;
+
+  const speed =
+    clampSpeed(
+      $('manualSpeedInput').value
+    );
+
+  syncManualSpeed(
+    speed
+  );
+
+  try{
+    await sendCommand(
+      {
+        cmd:'motor_run',
+        motor,
+        direction,
+        speed_us:speed
+      },
+      `MANUAL RUN ${motor.toUpperCase()} ${direction.toUpperCase()} ${speed}us`
+    );
+
+  }catch(_){}
+}
+
+
+async function manualStop(){
+  const motor =
+    $('manualMotor').value;
+
+  try{
+    await sendCommand(
+      {
+        cmd:'motor_stop',
+        motor
+      },
+      `MANUAL STOP ${motor.toUpperCase()}`
+    );
+
+  }catch(_){}
+}
+
+
+/* ============================================================
+ * STATUS RENDERING
+ * ============================================================ */
+
+function renderMotor(
+  name,
+  data
+){
+  data =
+    data || {};
+
+  const active =
+    Boolean(data.active);
+
+  const stateEl =
+    $(`${name}State`);
+
+  stateEl.textContent =
+    active ? 'RUN' : 'STOP';
+
+  stateEl.className =
+    'statePill' +
+    (active ? ' run' : '');
+
+  const direction =
+    String(
+      data.direction || 'stop'
+    ).toUpperCase();
+
+  if(name === 'carriage'){
+    $('carriageRunDir').textContent =
+      direction;
+  }else{
+    $(`${name}Dir`).textContent =
+      direction;
+  }
+
+  $(`${name}RunSpeed`).textContent =
+    `${Number(data.speed_us || 0)} µs`;
+
+  $(`${name}Pwm`).textContent =
+    `${Number(data.pwm_us || 1500)} µs`;
+}
+
+
+function updateProfileFromStatus(
+  motor,
+  direction,
+  value
+){
+  if(value == null){
+    return;
+  }
+
+  const key =
+    profileKey(
+      motor,
+      direction
+    );
+
+  const speed =
+    clampSpeed(value);
+
+  $(`${key}Saved`).textContent =
+    `${speed} µs`;
+
+  if(!initializedProfiles){
+    syncProfile(
+      motor,
+      direction,
+      speed
+    );
+  }
+}
+
+
+function updateStatus(data){
+  if(!data || typeof data !== 'object'){
+    return;
+  }
+
+  const mode =
+    String(
+      data.mode || 'stop'
+    ).toLowerCase();
+
+  $('mode').textContent =
+    mode.toUpperCase();
+
+  $('mode').className =
+    `value mode ${mode}`;
+
+
+  $('carriageDir').textContent =
+    String(
+      data.carriage_direction || '-'
+    ).toUpperCase();
+
+
+  if(data.app){
+    $('appName').textContent =
+      data.app;
+  }
+
+  if(data.version){
+    $('fwVersion').textContent =
+      data.version;
+  }
+
+  if(data.ip){
+    $('deviceIp').textContent =
+      data.ip;
+  }
+
+  if(data.tcp_port != null){
+    $('tcpPort').textContent =
+      data.tcp_port;
+  }
+
+
+  const limits =
+    data.limits || {};
+
+  $('leftLamp').className =
+    'lamp' +
+    (limits.left ? ' active' : '');
+
+  $('rightLamp').className =
+    'lamp' +
+    (limits.right ? ' active' : '');
+
+
+  const settings =
+    data.settings || {};
+
+  updateProfileFromStatus(
+    'drum',
+    'ulur',
+    settings.drum?.ulur
+  );
+
+  updateProfileFromStatus(
+    'drum',
+    'tarik',
+    settings.drum?.tarik
+  );
+
+  updateProfileFromStatus(
+    'carriage',
+    'left',
+    settings.carriage?.left
+  );
+
+  updateProfileFromStatus(
+    'carriage',
+    'right',
+    settings.carriage?.right
+  );
+
+  updateProfileFromStatus(
+    'output',
+    'ulur',
+    settings.output?.ulur
+  );
+
+  updateProfileFromStatus(
+    'output',
+    'tarik',
+    settings.output?.tarik
+  );
+
+
+  if(settings.drum || settings.carriage || settings.output){
+    initializedProfiles = true;
+  }
+
+
+  const motor =
+    data.motor || {};
+
+  renderMotor(
+    'drum',
+    motor.drum
+  );
+
+  renderMotor(
+    'carriage',
+    motor.carriage
+  );
+
+  renderMotor(
+    'output',
+    motor.output
+  );
+
+
+  /*
+   * Backward fallback:
+   * If firmware returns old pwm_us only, still show actual PWM.
+   */
+  if(!motor.drum && data.pwm_us?.drum != null){
+    $('drumPwm').textContent =
+      `${data.pwm_us.drum} µs`;
+  }
+
+  if(!motor.carriage && data.pwm_us?.carriage != null){
+    $('carriagePwm').textContent =
+      `${data.pwm_us.carriage} µs`;
+  }
+
+  if(!motor.output && data.pwm_us?.output != null){
+    $('outputPwm').textContent =
+      `${data.pwm_us.output} µs`;
+  }
+
+
+  $('lastUpdate').textContent =
+    new Date().toLocaleTimeString();
+}
+
+
+/* ============================================================
+ * STATUS POLLING
+ * ============================================================ */
+
+async function pollOnce(){
+  const json =
+    await api(
+      '/api/status'
+    );
+
+  if(!json.ok){
+    throw new Error(
+      errorMessage(
+        json,
+        'Status request rejected'
+      )
+    );
+  }
+
+  setOnline(true);
+
+  updateStatus(
+    json.data || json
+  );
+
+  return json;
+}
+
+
+async function pollLoop(){
+  try{
+
+    await pollOnce();
+
+  }catch(error){
+
+    if(online){
+      log(
+        `Status connection lost: ${error.message}`,
+        'err'
+      );
+    }
+
+    setOnline(false);
+
+  }finally{
+
+    window.setTimeout(
+      pollLoop,
+      POLL_MS
+    );
+  }
+}
+
+
+/* ============================================================
+ * KEYBOARD SAFETY SHORTCUT
+ * ============================================================ */
+
+window.addEventListener(
+  'keydown',
+  event => {
+
+    if(
+      event.key === 'Escape' &&
+      online
+    ){
+
+      sendCommand(
+        {cmd:'stop'},
+        'STOP (ESC)'
+      ).catch(()=>{});
+    }
+  }
+);
+
+
+/* ============================================================
+ * STARTUP
+ * ============================================================ */
+
+updateManualDirections();
+
+syncManualSpeed(
+  $('manualSpeedInput').value
+);
+
+setOnline(false);
+
+log(
+  'Opening ODIS TMS embedded control console...',
+  'rx'
+);
+
+pollLoop();
+
 </script>
 </body>
 </html>

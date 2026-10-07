@@ -17,6 +17,6 @@
     "--query-driver=**",
     "--compile-commands-dir=d:\\2026\\2609\\ODIS_TMS_v0_3_0_cmake\\ODIS_TMS_v0_3_0\\build"
   ],
-  "idf.portWin": "COM6",
-  "idf.flashType": "UART"
+  "idf.flashType": "UART",
+  "idf.port": "COM6"
 }

@@ -52,6 +52,6 @@ direct_dependencies:
 - espressif/led_strip
 - espressif/w5500
 - idf
-manifest_hash: 2346a48aca62b429f5a6b8a8e17a76a96d56f07c26cdd178b8dee8cdf057fca2
+manifest_hash: 9127e59e360bb5cfbca46fb40dbedb2cfac684a6f1edc072574b4f345a8e9760
 target: esp32s3
 version: 3.0.0
